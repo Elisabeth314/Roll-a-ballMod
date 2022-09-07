@@ -2,18 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 0;
     public TextMeshProUGUI countText;
-    public GameObject winTextObject;
+    public TextMeshProUGUI winTextObject;
 
     private Rigidbody rb;
     private int count;
     private float movementX;
     private float movementY;
+    private bool timeLeft = true;
+
+
+    public void NoMoreTime()
+    {
+        Debug.Log("NoMoreTime");
+
+        if (count != 13)
+        {
+            winTextObject.text = "You Lose!";
+        }
+        timeLeft = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +36,7 @@ public class PlayerController : MonoBehaviour
         count = 0;
 
         SetCountText();
-        winTextObject.SetActive(false);
+        winTextObject.text = "";
     }
 
     void OnMove(InputValue movementValue)
@@ -38,7 +52,7 @@ public class PlayerController : MonoBehaviour
         countText.text = "Count: " + count.ToString();
         if(count >= 13)
         {
-            winTextObject.SetActive(true);
+            winTextObject.text = "You Win!";
         }
     }
 
@@ -51,6 +65,8 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (!timeLeft) return;
+
         if (other.gameObject.CompareTag("PickUp"))
         {
             other.gameObject.SetActive(false);
